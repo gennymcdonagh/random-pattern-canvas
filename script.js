@@ -6,12 +6,18 @@ let ctx;
 canvas.width  = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
-if (canvas.getContext) {
-  ctx = canvas.getContext('2d');
-} else {
-  console.log('canvas unsupported');
+// variables for random positioning algorithm
+const numSamples = 50; 
+const points = []; 
+
+function init() {
+  if (canvas.getContext) {
+    ctx = canvas.getContext('2d');
+  } else {
+    console.log('canvas unsupported');
+  }
+  canvas.addEventListener("click", draw);
 }
-canvas.addEventListener("click", draw);
 
 function draw() {
   randomlyPosition(rectangle);
@@ -22,19 +28,59 @@ function getRandomIntInRange(min, max) {
 }
 
 function randomlyPosition(shape) {
-  const x = getRandomIntInRange(0, CANVAS_WIDTH);
-  const y = getRandomIntInRange(0, CANVAS_HEIGHT);
+  const pos = getRandomPosition();
 
-  ctx.fillStyle = "orange";
-  shape(x,y);
+  ctx.fillStyle = "green";
+  shape(pos[0],pos[1]);
 }
 
 function rectangle(x,y) {
-  const rectWidth = getRandomIntInRange(10, CANVAS_WIDTH/6);
-  const rectHeight = getRandomIntInRange(10, CANVAS_WIDTH/6);
+  const rectWidth = getRandomIntInRange(10, 15);
+  const rectHeight = getRandomIntInRange(10, 15);
 
   ctx.fillRect(x, y, rectWidth, rectHeight);
 }
 
+// Mitchell’s best-candidate algorithm
+// https://bost.ocks.org/mike/algorithms/
+// https://jsfiddle.net/pendensproditor/2XyV5
+function getRandomPosition() {
+  let bestPoint, bestDistance = 0;
+  for (let i = 0; i < numSamples; ++i) {
+    const newPoint = [Math.random() * CANVAS_WIDTH, Math.random() * CANVAS_HEIGHT];
+    if (!points.length) {
+      points.push(newPoint);
+      return newPoint;
+    }
+
+    const newDistance = findClosestDistance(newPoint);
+    if (newDistance > bestDistance) {
+      bestDistance = newDistance;
+      bestPoint = newPoint;
+    }
+  }
+  points.push(bestPoint);
+  return bestPoint;
+}
+
+function distance(a, b) {
+  const dx = a[0] - b[0],
+      dy = a[1] - b[1];
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+// this isn't very efficient for large numbers of points - todo optimise
+function findClosestDistance(newPoint) {
+  let bestDistance = null;
+  points.forEach((p) => {
+    let newPointDistance = distance(newPoint, p);
+    if (newPointDistance < bestDistance || bestDistance == null) {
+      bestDistance = newPointDistance;
+    }
+  })
+  return bestDistance;
+}
+
+init();
 
 
