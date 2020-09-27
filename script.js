@@ -9,6 +9,7 @@ canvas.height = CANVAS_HEIGHT;
 // variables for random positioning algorithm
 const numSamples = 50; 
 const points = []; 
+const numberOfShapes = 100;
 
 function init() {
   if (canvas.getContext) {
@@ -20,7 +21,15 @@ function init() {
 }
 
 function draw() {
-  randomlyPosition(rectangle);
+  let shapesDrawn = 0;
+  const interval = setInterval(() => {
+    randomlyPosition(rectangle);
+    shapesDrawn++;
+
+    if (shapesDrawn === numberOfShapes) clearInterval(interval);
+  }, 5);
+
+  
 }
 
 function getRandomIntInRange(min, max) {
