@@ -23,13 +23,11 @@ function init() {
 function draw() {
   let shapesDrawn = 0;
   const interval = setInterval(() => {
-    randomlyPosition(rectangle);
+    randomlyPosition(equilateralTriangle);
     shapesDrawn++;
 
     if (shapesDrawn === numberOfShapes) clearInterval(interval);
   }, 5);
-
-  
 }
 
 function getRandomIntInRange(min, max) {
@@ -48,6 +46,17 @@ function rectangle(x,y) {
   const rectHeight = getRandomIntInRange(10, 15);
 
   ctx.fillRect(x, y, rectWidth, rectHeight);
+}
+
+// x,y is the top corner of the triangle
+function equilateralTriangle(x,y) {
+  const triangleWidth = getRandomIntInRange(10, 15);
+  const triangleHeight = triangleWidth * Math.sqrt(3) / 2;
+  ctx.beginPath();
+  ctx.moveTo(x,y);
+  ctx.lineTo(x - (triangleWidth / 2), y + triangleHeight);
+  ctx.lineTo(x + triangleWidth / 2, y + triangleHeight);
+  ctx.fill();
 }
 
 // Mitchell’s best-candidate algorithm
