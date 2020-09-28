@@ -23,11 +23,24 @@ function init() {
 function draw() {
   let shapesDrawn = 0;
   const interval = setInterval(() => {
-    randomlyPosition(equilateralTriangle);
+    ctx.fillStyle = "green";
+    randomlyPosition(rotate((rectangle)));
+    ctx.fillStyle = "pink";
+    randomlyPosition((equilateralTriangle));
     shapesDrawn++;
 
     if (shapesDrawn === numberOfShapes) clearInterval(interval);
   }, 5);
+}
+
+function rotate(shape) {
+  return (x, y) => {
+    ctx.save();
+    ctx.translate(x, y); 
+    ctx.rotate(2 * Math.PI * Math.random());
+    shape(0,0);
+    ctx.restore();
+  }
 }
 
 function getRandomIntInRange(min, max) {
@@ -36,8 +49,6 @@ function getRandomIntInRange(min, max) {
 
 function randomlyPosition(shape) {
   const pos = getRandomPosition();
-
-  ctx.fillStyle = "green";
   shape(pos[0],pos[1]);
 }
 
