@@ -11,26 +11,62 @@ const numSamples = 50;
 const points = []; 
 const numberOfShapes = 100;
 
+const shapes = {
+  rectangle: function (x,y) {
+    const width = getRandomIntInRange(10, 15);
+    const height = getRandomIntInRange(10, 15);
+    ctx.fillRect(x, y, width, height);
+  },
+  
+  circle: function (x,y) {
+    const diameter = getRandomIntInRange(10, 15);
+    ctx.beginPath();
+    ctx.arc(x, y, diameter/2, 0, Math.PI * 2, true);
+    ctx.fill();
+  },
+  
+  // x,y is the top corner of the triangle
+  triangle: function (x,y) {
+    const width = getRandomIntInRange(10, 15);
+    const height = width * Math.sqrt(3) / 2;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x - (width / 2), y + height);
+    ctx.lineTo(x + width / 2, y + height);
+    ctx.fill();
+  },
+};
+
 function init() {
   if (canvas.getContext) {
     ctx = canvas.getContext('2d');
   } else {
     console.log('canvas unsupported');
   }
-  canvas.addEventListener("click", draw);
+  canvas.addEventListener("click", drawMany);
 }
 
-function draw() {
+function drawMany() {
   let shapesDrawn = 0;
   const interval = setInterval(() => {
-    ctx.fillStyle = "green";
-    randomlyPosition(rotate((rectangle)));
-    ctx.fillStyle = "pink";
-    randomlyPosition((equilateralTriangle));
+    ctx.fillStyle = randomColor();
+    randomlyPosition(rotate((randomShape())));
     shapesDrawn++;
 
     if (shapesDrawn === numberOfShapes) clearInterval(interval);
   }, 5);
+}
+
+function randomColor() {
+  const maxColor = parseInt('ffffff', 16);
+  const randomHex = getRandomIntInRange(0,maxColor);
+  return `#${randomHex.toString(16)}`;
+}
+
+function randomShape() {
+  const shapesKeys = Object.keys(shapes);
+  const randomKey = shapesKeys[getRandomIntInRange(0, shapesKeys.length - 1)];
+  return shapes[randomKey];
 }
 
 function rotate(shape) {
@@ -52,23 +88,7 @@ function randomlyPosition(shape) {
   shape(pos[0],pos[1]);
 }
 
-function rectangle(x,y) {
-  const rectWidth = getRandomIntInRange(10, 15);
-  const rectHeight = getRandomIntInRange(10, 15);
 
-  ctx.fillRect(x, y, rectWidth, rectHeight);
-}
-
-// x,y is the top corner of the triangle
-function equilateralTriangle(x,y) {
-  const triangleWidth = getRandomIntInRange(10, 15);
-  const triangleHeight = triangleWidth * Math.sqrt(3) / 2;
-  ctx.beginPath();
-  ctx.moveTo(x,y);
-  ctx.lineTo(x - (triangleWidth / 2), y + triangleHeight);
-  ctx.lineTo(x + triangleWidth / 2, y + triangleHeight);
-  ctx.fill();
-}
 
 // Mitchell’s best-candidate algorithm
 // https://bost.ocks.org/mike/algorithms/
