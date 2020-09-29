@@ -4,6 +4,7 @@ const CANVAS_WIDTH = window.innerWidth;
 const CANVAS_HEIGHT = window.innerHeight;
 const canvas = document.getElementById('canvas');
 let ctx;
+let interval;
 canvas.width  = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
@@ -50,13 +51,13 @@ function init() {
 }
 
 function drawShapes() {
-  //reset the canvas
+  // stop existing interval and reset the canvas
+  clearInterval(interval);
   points = [];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // todo clear interval
 
   let shapesDrawn = 0;
-  const interval = setInterval(() => {
+  interval = setInterval(() => {
     ctx.fillStyle = randomColor();
     randomlyPosition(rotate((randomShape())));
     shapesDrawn++;
