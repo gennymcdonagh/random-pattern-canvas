@@ -5,8 +5,10 @@ https://gennymcdonagh.github.io/random-pattern-canvas/
 
 Uses a seeded random number generator:
 https://github.com/davidbau/seedrandom
+
 This way you can get the same pattern each time by providing the same seed in the query string, eg:
 https://gennymcdonagh.github.io/random-pattern-canvas/?sunflowerseed1234
+
 Or omit the query string and a random seed will be used.
 Click the page to get a new seed and new pattern.
 
