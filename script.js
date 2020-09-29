@@ -7,6 +7,8 @@ let ctx;
 let interval;
 canvas.width  = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
+let seed;
+let myrng;
 
 // variables for random positioning algorithm
 const numSamples = 50; 
@@ -43,18 +45,30 @@ const shapes = {
 function init() {
   if (canvas.getContext) {
     ctx = canvas.getContext('2d');
-    canvas.addEventListener("click", drawShapes);
+    // provide a seed if there's not one already
+    if (!window.location.search) window.location.search = Math.random();
     drawShapes();
+    canvas.addEventListener("click", redraw);
   } else {
     console.log('canvas unsupported');
   }
 }
 
-function drawShapes() {
+function redraw() {
+  // get a new seed
+  window.location.search = Math.random();
+
   // stop existing interval and reset the canvas
   clearInterval(interval);
   points = [];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawShapes;
+}
+
+function drawShapes() {
+  seed = window.location.search;
+  myrng = new Math.seedrandom(seed);
 
   let shapesDrawn = 0;
   interval = setInterval(() => {
@@ -85,14 +99,14 @@ function rotate(shape) {
   return (x, y) => {
     ctx.save();
     ctx.translate(x, y); 
-    ctx.rotate(2 * Math.PI * Math.random());
+    ctx.rotate(2 * Math.PI * myrng());
     shape(0,0);
     ctx.restore();
   }
 }
 
 function getRandomIntInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  return Math.floor(myrng() * (max - min + 1) + min);
 }
 
 function randomlyPosition(shape) {
@@ -107,7 +121,7 @@ function randomlyPosition(shape) {
 function getRandomPosition() {
   let bestPoint, bestDistance = 0;
   for (let i = 0; i < numSamples; ++i) {
-    const newPoint = [Math.random() * canvas.width, Math.random() * canvas.height];
+    const newPoint = [myrng() * canvas.width, myrng() * canvas.height];
     if (!points.length) {
       points.push(newPoint);
       return newPoint;
